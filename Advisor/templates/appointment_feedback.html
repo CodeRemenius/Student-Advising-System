@@ -1,0 +1,31 @@
+<!-- appointment_feedback.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Feedback</title>
+</head>
+<body>
+    <h1>Appointment Feedback</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Appointment</th>
+                <th>Rating</th>
+                <th>Comment</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for feedback in feedbacks %}
+            <tr>
+                <td>{{ feedback.appointment }}</td>
+                <td>{{ feedback.rating }}</td>
+                <td>{{ feedback.comment }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

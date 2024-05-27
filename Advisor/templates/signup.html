@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advisor Sign Up</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .card {
+            width: 300px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .card h2 {
+            text-align: center;
+        }
+        .card p {
+            margin-top: 20px;
+            text-align: center;
+            color: red; /* Error message color */
+        }
+        .card a {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Advisor Sign Up</h2>
+        {% if error_message %}
+            <p>{{ error_message }}</p>
+        {% endif %}
+        <form method="post">
+            {% csrf_token %}
+            <label for="email">School Email:</label><br>
+            <input type="email" id="email" name="email" required><br><br>
+            
+            <label for="password">Password:</label><br>
+            <input type="password" id="password" name="password" required><br><br>
+            
+            <label for="first_name">First Name:</label><br>
+            <input type="text" id="first_name" name="first_name" required><br><br>
+            
+            <label for="last_name">Last Name:</label><br>
+            <input type="text" id="last_name" name="last_name" required><br><br>
+            
+            <label for="phone_number">Phone Number:</label><br>
+            <input type="tel" id="phone_number" name="phone_number" required><br><br>
+            
+            <label for="areas_of_expertise">Area of Expertise:</label><br>
+            <select id="areas_of_expertise" name="areas_of_expertise" required>
+                <option value="">Select Area of Expertise</option>
+                <option value="Software Engineering">Software Engineering</option>
+                <option value="Cybersecurity">Cybersecurity</option>
+                <option value="Computer Science">Computer Science</option>
+                <option value="Information Technology">Information Technology</option>
+            </select><br><br>
+            
+            <button type="submit" id="signup_btn" disabled>Sign Up</button>
+        </form>
+    
+    </div>
+
+    <script>
+        document.getElementById('phone_number').addEventListener('input', function() {
+            var phone_number = this.value.replace(/\D/g, ''); // Remove non-digit characters
+            var btn = document.getElementById('signup_btn');
+            if (phone_number.length === 11) {
+                btn.disabled = false;
+            } else {
+                btn.disabled = true;
+            }
+        });
+    </script>
+</body>
+</html>

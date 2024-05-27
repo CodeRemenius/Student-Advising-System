@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Appointments</title>
+</head>
+<body>
+    <h1>Appointments Pending Approval</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Advisor</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Topic</th>
+                <th>Mode of Meeting</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for appointment in appointments %}
+            <tr>
+                <td>{{ appointment.advisor.user.get_full_name }}</td>
+                <td>{{ appointment.start_time }}</td>
+                <td>{{ appointment.end_time }}</td>
+                <td>{{ appointment.topic }}</td>
+                <td>{{ appointment.mode_of_meeting }}</td>
+                <td>
+                    <form action="{% url 'approved_appointments_student' appointment.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit">Agree</button>
+                    </form>
+                    <a href="{% url 'edit_appointment_student' appointment.id %}">Edit</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!-- appointment_history.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment History</title>
+</head>
+<body>
+    <h1>Appointment History</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Advisor</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Topic</th>
+                <th>Mode of Meeting</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for appointment in appointments %}
+            <tr onclick="window.location='{% url 'appointment_detail_student' appointment.id %}'" style="cursor: pointer;">
+                <td>{{ appointment.advisor.user.get_full_name }}</td>
+                <td>{{ appointment.start_time }}</td>
+                <td>{{ appointment.end_time }}</td>
+                <td>{{ appointment.topic }}</td>
+                <td>{{ appointment.get_mode_of_meeting_display }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

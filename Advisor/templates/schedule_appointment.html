@@ -1,0 +1,33 @@
+<!-- schedule_appointment.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule Appointment</title>
+</head>
+<body>
+    <h1>Schedule Appointment</h1>
+    <form method="post" action="{% url 'schedule_appointment' %}">
+        {% csrf_token %}
+        <label for="student">Student:</label><br>
+        <select id="student" name="student" required>
+            {% for student in students %}
+                <option value="{{ student.id }}">{{ student.user.get_full_name }}</option>
+            {% endfor %}
+        </select><br><br>
+        <label for="start_time">Start Time:</label><br>
+        <input type="datetime-local" id="start_time" name="start_time" required><br><br>
+        <label for="end_time">End Time:</label><br>
+        <input type="datetime-local" id="end_time" name="end_time" required><br><br>
+        <label for="topic">Topic:</label><br>
+        <input type="text" id="topic" name="topic" required><br><br>
+        <label for="mode_of_meeting">Mode of Meeting:</label><br>
+        <select id="mode_of_meeting" name="mode_of_meeting" required>
+            <option value="Online">Online</option>
+            <option value="Physical">Physical</option>
+        </select><br><br>
+        <button type="submit">Schedule Appointment</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Define Advising Hours</title>
+    <!-- Add any additional stylesheets or scripts here -->
+</head>
+<body>
+    <h2>Define Advising Hours</h2>
+    <form method="post">
+        {% csrf_token %}
+        <label for="start_time">Advising Hour Start:</label><br>
+        <input type="time" id="start_time" name="start_time" value="{{ advisor.office_hours_start|time:'H:i' }}"><br><br>
+        
+        <label for="end_time">Advising Hour End:</label><br>
+        <input type="time" id="end_time" name="end_time" value="{{ advisor.office_hours_end|time:'H:i' }}"><br><br>
+        
+        <button type="submit">Save Advising Hours</button>
+    </form>
+</body>
+</html>

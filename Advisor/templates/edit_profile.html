@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
+    <!-- Add any additional stylesheets or scripts here -->
+</head>
+<body>
+    <h2>Edit Profile</h2>
+    <form method="post" action="{% url 'edit_profile_advisor' %}">
+        {% csrf_token %}
+        <label for="first_name">First Name:</label><br>
+        <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}"><br><br>
+        
+        <label for="last_name">Last Name:</label><br>
+        <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}"><br><br>
+        
+        <label for="email">School Email:</label><br>
+        <input type="email" id="email" name="email" value="{{ user.email }}" readonly><br><br>
+        
+        <label for="phone_number">Phone Number:</label><br>
+        <input type="text" id="phone_number" name="phone_number" value="{{ user.advisor.phone_number }}"><br><br>
+        
+        <label for="areas_of_expertise">Area of Expertise:</label><br>
+        <select id="areas_of_expertise" name="areas_of_expertise">
+            <option value="">Select Area of Expertise</option>
+            <option value="Software Engineering" {% if user.advisor.areas_of_expertise == 'Software Engineering' %} selected {% endif %}>Software Engineering</option>
+            <option value="Cybersecurity" {% if user.advisor.areas_of_expertise == 'Cybersecurity' %} selected {% endif %}>Cybersecurity</option>
+            <option value="Computer Science" {% if user.advisor.areas_of_expertise == 'Computer Science' %} selected {% endif %}>Computer Science</option>
+            <option value="Information Technology" {% if user.advisor.areas_of_expertise == 'Information Technology' %} selected {% endif %}>Information Technology</option>
+        </select><br><br>
+        
+        <button type="submit">Save Changes</button>
+    </form>
+            
+    <!-- Go Back button -->
+    <a href="{% url 'profile_advisor' %}">Go Back</a>
+</body>
+</html>

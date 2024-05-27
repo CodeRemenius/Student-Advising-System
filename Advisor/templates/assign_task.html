@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assign Task</title>
+</head>
+<body>
+    <h1>Assign Task</h1>
+    <form method="post" action="{% url 'assign_task' %}">
+        {% csrf_token %}
+        <label for="student">Select Student:</label><br>
+        <select id="student" name="student">
+            {% for student in students %}
+                <option value="{{ student.id }}">{{ student.user.get_full_name }}</option>
+            {% endfor %}
+        </select><br><br>
+        <label for="title">Title:</label><br>
+        <input type="text" id="title" name="title" required><br><br>
+        <label for="description">Description:</label><br>
+        <textarea id="description" name="description" rows="4" required></textarea><br><br>
+        <label for="deadline">Deadline:</label><br>
+        <input type="datetime-local" id="deadline" name="deadline" required><br><br>
+        <button type="submit">Assign Task</button>
+    </form>
+</body>
+</html>

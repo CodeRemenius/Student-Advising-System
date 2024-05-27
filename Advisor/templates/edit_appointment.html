@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Appointment</title>
+</head>
+<body>
+    <h1>Edit Appointment</h1>
+    <form method="post" action="{% url 'edit_appointment' %}">
+        {% csrf_token %}
+        <label for="start_time">Start Time:</label><br>
+        <input type="datetime-local" id="start_time" name="start_time" value="{{ appointment.start_time|date:'Y-m-d\TH:i' }}"><br>
+        <label for="end_time">End Time:</label><br>
+        <input type="datetime-local" id="end_time" name="end_time" value="{{ appointment.end_time|date:'Y-m-d\TH:i' }}"><br>
+        <label for="topic">Topic:</label><br>
+        <input type="text" id="topic" name="topic" value="{{ appointment.topic }}"><br>
+        <label for="mode_of_meeting">Mode of Meeting:</label><br>
+        <select id="mode_of_meeting" name="mode_of_meeting">
+            {% for choice in MEETING_CHOICES %}
+                <option value="{{ choice.0 }}" {% if choice.0 == appointment.mode_of_meeting %}selected{% endif %}>{{ choice.1 }}</option>
+            {% endfor %}
+        </select><br><br>
+        <button type="submit">Save Changes</button>
+    </form>
+</body>
+</html>

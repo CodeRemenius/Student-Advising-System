@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Profile</title>
+    <!-- Add any additional stylesheets or scripts here -->
+</head>
+<body>
+    <h2>View Profile</h2>
+    <form>
+        <label for="first_name">First Name:</label><br>
+        <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}" readonly><br><br>
+        
+        <label for="last_name">Last Name:</label><br>
+        <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}" readonly><br><br>
+        
+        <label for="email">School Email:</label><br>
+        <input type="email" id="email" name="email" value="{{ user.email }}" readonly><br><br>
+        
+        <label for="phone_number">Phone Number:</label><br>
+        <input type="text" id="phone_number" name="phone_number" value="{{ user.student.phone_number }}" readonly><br><br>
+        
+        <label for="department">Department:</label><br>
+        <input type="text" id="department" name="department" value="{{ user.student.department }}" readonly><br><br>
+        
+        <a href="{% url 'edit_profile_student' %}">Edit Profile</a>
+    </form>
+</body>
+</html>

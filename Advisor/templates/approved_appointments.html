@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Approved Appointments</title>
+</head>
+<body>
+    <h1>Approved Appointments</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Topic</th>
+                <th>Mode of Meeting</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for appointment in appointments %}
+            <tr>
+                <td>{{ appointment.student.user.get_full_name }}</td>
+                <td>{{ appointment.start_time }}</td>
+                <td>{{ appointment.end_time }}</td>
+                <td>{{ appointment.topic }}</td>
+                <td>{{ appointment.mode_of_meeting }}</td>
+                <td><a href="{% url 'complete_appointment' appointment.id %}">Complete</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advisor Dashboard</title>
+    <!-- Add any additional stylesheets or scripts here -->
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>Advisor Dashboard</h2>
+        <div class="dropdown">
+            <button class="dropbtn">Profile</button>
+            <div class="dropdown-content">
+                <a href="{% url 'profile_advisor' %}">View Profile</a>
+                <a href="{% url 'edit_profile_advisor' %}">Edit Profile</a>
+                <a href="{% url 'define_advising_hours' %}">Advising Hours</a>
+            </div>
+        </div>
+        <div class="dropdown">
+            <button class="dropbtn">Tasks</button>
+            <div class="dropdown-content">
+                <a href="{% url 'assign_task' %}">Assign Task</a>
+                <a href="{% url 'task_history' %}">Task History</a>
+            </div>
+        </div>
+        <div class="dropdown">
+            <button class="dropbtn">Appointments</button>
+            <div class="dropdown-content">
+                <a href="{% url 'schedule_appointment' %}">Schedule Appointments</a>
+                <a href="{% url 'view_appointments' %}">View Appointments</a>
+                <a href="{% url 'appointment_history' %}">Appointment History</a>
+            </div>
+        </div>
+        <a href="{% url 'view_students' %}">Students</a>
+        <a href="{% url 'advisor_notifications' %}">Notifications</a>
+        <a href="{% url 'logout_advisor' %}">Logout</a>
+    </div>
+
+    <!-- Page content -->
+    <div class="content">
+        <h2>Welcome, {{ user.get_full_name }}</h2>
+    
+        <!-- Last 4 tasks -->
+        <h3>Last 4 Tasks</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Deadline</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in last_4_tasks %}
+                <tr>
+                    <td>{{ task.title }}</td>
+                    <td>{{ task.description }}</td>
+                    <td>{{ task.deadline }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    
+        <!-- Next 4 appointments -->
+        <h3>Next 4 Appointments</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Topic</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appointment in next_4_appointments %}
+                <tr>
+                    <td>{{ appointment.student.user.get_full_name }}</td>
+                    <td>{{ appointment.start_time }}</td>
+                    <td>{{ appointment.end_time }}</td>
+                    <td>{{ appointment.topic }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    
+        <!-- Last 3 unapproved appointments -->
+        <h3>Last 3 Unapproved Appointments</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Topic</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appointment in last_3_unapproved_appointments %}
+                <tr>
+                    <td>{{ appointment.student.user.get_full_name }}</td>
+                    <td>{{ appointment.start_time }}</td>
+                    <td>{{ appointment.end_time }}</td>
+                    <td>{{ appointment.topic }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Advisor</title>
+</head>
+<body>
+    <h2>Change Your Advisor</h2>
+    <form method="post" action="{% url 'select_advisor' %}">
+        {% csrf_token %}
+        <label for="advisor">Select Advisor:</label><br>
+        <select id="advisor" name="advisor">
+            {% for advisor in advisors %}
+                <option value="{{ advisor.id }}" {% if advisor.id == current_advisor.id %}selected{% endif %}>{{ advisor.user.get_full_name }}</option>
+            {% endfor %}
+        </select><br><br>
+        <button type="submit">Save</button>
+    </form>
+</body>
+</html>
