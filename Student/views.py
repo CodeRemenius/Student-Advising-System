@@ -128,6 +128,38 @@ def select_advisor(request):
     return render(request, 'select_advisor.html', {'advisors': advisors, 'current_advisor': current_advisor})
 
 def schedule_appointment(request):
+    student = request.user.student
+    advisor = student.advisor
+
+    if request.method == 'POST':
+        start_time_str = request.POST.get('start_time')
+        end_time_str = request.POST.get('end_time')
+        topic = request.POST.get('topic')
+        mode_of_meeting = request.POST.get('mode_of_meeting')
+
+        # Convert start_time and end_time strings to datetime objects
+        start_time = timezone.make_aware(datetime.strptime(start_time_str, '%Y-%m-%dT%H:%M'))
+        end_time = timezone.make_aware(datetime.strptime(end_time_str, '%Y-%m-%dT%H:%M'))
+
+        # Create the appointment
+        appointment = Appointment.objects.create(
+            advisor=advisor,
+            student=student,
+            start_time=start_time,
+            end_time=end_time,
+            topic=topic,
+            mode_of_meeting=mode_of_meeting,
+            approved_by_student=True
+        )
+
+        # Create a notification for the advisor
+        advisor_user = advisor.user
+        message = f"An appointment has been scheduled by {student.user.get_full_name()}."
+        Notification.objects.create(user=advisor_user, message=message)
+
+        # Redirect to appointment detail page or any other page as needed
+        return redirect('appointment_detail_student', appointment_id=appointment.id)
+
     return render(request, 'schedule_appointment_student.html')
 
 def appointment_detail(request, appointment_id):
