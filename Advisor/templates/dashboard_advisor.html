@@ -30,11 +30,13 @@
             <div class="dropdown-content">
                 <a href="{% url 'schedule_appointment' %}">Schedule Appointments</a>
                 <a href="{% url 'view_appointments' %}">View Appointments</a>
+                <a class="dropdown-item" href="{% url 'approved_appointments' %}">Approved Appointments</a>
                 <a href="{% url 'appointment_history' %}">Appointment History</a>
             </div>
         </div>
         <a href="{% url 'view_students' %}">Students</a>
         <a href="{% url 'advisor_notifications' %}">Notifications</a>
+        <a href="{% url 'appointment_feedback' %}">Feedback</a>
         <a href="{% url 'logout_advisor' %}">Logout</a>
     </div>
 

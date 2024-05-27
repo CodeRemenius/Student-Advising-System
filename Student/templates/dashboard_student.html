@@ -117,20 +117,39 @@
     <div style="margin-left: 200px; padding: 20px;">
         <h1>Welcome to Your Dashboard</h1>
         
-        <!-- Display upcoming appointment -->
-        <h2>Upcoming Appointment</h2>
-        {% if upcoming_appointment %}
-            <p>{{ upcoming_appointment.topic }}</p>
-            <!-- Add link to view appointment details -->
+        <!-- Display upcoming appointments -->
+        <h2>Upcoming Appointments</h2>
+        {% if upcoming_appointments %}
+            <ul>
+            {% for appointment in upcoming_appointments %}
+                <li>{{ appointment.topic }} - {{ appointment.start_time }}</li>
+            {% endfor %}
+            </ul>
         {% else %}
             <p>No upcoming appointments.</p>
         {% endif %}
 
+        <!-- Display uncompleted tasks -->
+        <h2>Uncompleted Tasks</h2>
+        {% if tasks %}
+            <ul>
+            {% for task in tasks %}
+                <li>{{ task.title }} - Deadline: {{ task.deadline }}</li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>No uncompleted tasks.</p>
+        {% endif %}
+
         <!-- Display appointments awaiting approval -->
         <h2>Appointments Awaiting Your Approval</h2>
-        {% if awaiting_approval_appointment %}
-            <p>{{ awaiting_approval_appointment.topic }}</p>
-            <!-- Add link to view appointment details and approve -->
+        {% if awaiting_approval_appointments %}
+            <ul>
+            {% for appointment in awaiting_approval_appointments %}
+                <li>{{ appointment.topic }} - {{ appointment.start_time }}</li>
+                <!-- Add link to view appointment details and approve -->
+            {% endfor %}
+            </ul>
         {% else %}
             <p>No appointments awaiting your approval.</p>
         {% endif %}

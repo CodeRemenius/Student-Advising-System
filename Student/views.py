@@ -1,8 +1,10 @@
 from django.contrib.auth.models import User
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from Advisor.models import *
 from Advisor.backends import EmailBackend 
+from datetime import datetime
+from django.utils import timezone
 from django.contrib.auth import authenticate, logout, login as auth_login
 from django.contrib import messages
 from django.shortcuts import render, redirect
@@ -62,15 +64,44 @@ def signup_student(request):
         return render(request, 'student_signup.html')
 
 def dashboard_student(request):
-    # Logic to fetch tasks and appointments for the student
-    tasks = Task.objects.filter(student=request.user.student)[:4]  # Fetching the last 4 tasks for the student
-    appointments = Appointment.objects.filter(student=request.user.student, approved_by_student=False).first()  # Fetching the first unapproved appointment for the student
+    # Fetch upcoming appointments sorted by start time and limited to the next 4
+    upcoming_appointments = Appointment.objects.filter(
+        student=request.user.student,
+        approved_by_advisor=True,
+        approved_by_student=True,
+        is_completed=False,
+        is_rejected=False,
+        start_time__gte=timezone.now()
+    ).order_by('start_time')[:4]
+    
+    # Fetch the last 4 uncompleted tasks for the student
+    tasks = Task.objects.filter(
+        student=request.user.student,
+        completed=False,
+        failed=False
+    ).order_by('-deadline')[:4]
+
+    # Fetch appointments awaiting approval where approved_by_student is False
+    awaiting_approval_appointments = Appointment.objects.filter(
+        student=request.user.student,
+        approved_by_student=False
+    )
+
+    # If the student doesn't have an advisor, fetch advisors to populate the select field in the modal
     if not request.user.student.advisor:
-        # Fetch advisors to populate the select field in the modal
         advisors = Advisor.objects.all()
-        return render(request, 'dashboard_student.html', {'tasks': tasks, 'appointments': appointments, 'advisors': advisors})
+        return render(request, 'dashboard_student.html', {
+            'upcoming_appointments': upcoming_appointments,
+            'tasks': tasks,
+            'awaiting_approval_appointments': awaiting_approval_appointments,
+            'advisors': advisors
+        })
     else:
-        return render(request, 'dashboard_student.html', {'tasks': tasks, 'appointments': appointments})
+        return render(request, 'dashboard_student.html', {
+            'upcoming_appointments': upcoming_appointments,
+            'tasks': tasks,
+            'awaiting_approval_appointments': awaiting_approval_appointments
+        })
 
 def save_advisor(request):
     if request.method == 'POST':
@@ -130,6 +161,7 @@ def select_advisor(request):
 def schedule_appointment(request):
     student = request.user.student
     advisor = student.advisor
+    error_message = ""  # Initialize error message
 
     if request.method == 'POST':
         start_time_str = request.POST.get('start_time')
@@ -141,37 +173,62 @@ def schedule_appointment(request):
         start_time = timezone.make_aware(datetime.strptime(start_time_str, '%Y-%m-%dT%H:%M'))
         end_time = timezone.make_aware(datetime.strptime(end_time_str, '%Y-%m-%dT%H:%M'))
 
-        # Create the appointment
-        appointment = Appointment.objects.create(
-            advisor=advisor,
-            student=student,
-            start_time=start_time,
-            end_time=end_time,
-            topic=topic,
-            mode_of_meeting=mode_of_meeting,
-            approved_by_student=True
-        )
+        # Check if start time is before advisor's office hours start
+        if start_time.time() < advisor.office_hours_start:
+            error_message = "Advisor will be unavailable at the scheduled start time due to office hours."
 
-        # Create a notification for the advisor
-        advisor_user = advisor.user
-        message = f"An appointment has been scheduled by {student.user.get_full_name()}."
-        Notification.objects.create(user=advisor_user, message=message)
+        # Check if end time is after advisor's office hours end
+        elif end_time.time() > advisor.office_hours_end:
+            error_message = "Advisor will be unavailable at the scheduled end time due to office hours."
 
-        # Redirect to appointment detail page or any other page as needed
-        return redirect('appointment_detail_student', appointment_id=appointment.id)
+        else:
+            # Create the appointment
+            appointment = Appointment.objects.create(
+                advisor=advisor,
+                student=student,
+                start_time=start_time,
+                end_time=end_time,
+                topic=topic,
+                mode_of_meeting=mode_of_meeting,
+                approved_by_student=True
+            )
 
-    return render(request, 'schedule_appointment_student.html')
+            # Create a notification for the advisor
+            advisor_user = advisor.user
+            message = f"An appointment has been scheduled by {student.user.get_full_name()}."
+            Notification.objects.create(user=advisor_user, message=message)
 
-def appointment_detail(request, appointment_id):
-    appointment = get_object_or_404(Appointment, pk=appointment_id)
-    return render(request, 'appointment_detail_student.html', {'appointment': appointment})
+            # Redirect to appointment detail page or any other page as needed
+            return redirect('appointment_detail_student', appointment_id=appointment.id)
 
-def appointment_history(request):
-    appointments = Appointment.objects.filter(student=request.user.student, is_completed=True) | Appointment.objects.filter(advisor=request.user.advisor, is_rejected=True)
-    return render(request, 'appointment_history_student.html', {'appointments': appointments})
+    return render(request, 'schedule_appointment_student.html', {'error_message': error_message})
 
 def appointment_feedback(request, appointment_id):
-    return render(request, 'appointment_feedback_student.html')
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+
+    if request.method == 'POST':
+        rating = request.POST.get('rating')
+        comment = request.POST.get('comment')
+
+        # Create a feedback instance
+        feedback = Feedback.objects.create(appointment=appointment, rating=rating, comment=comment)
+        feedback.save()
+
+        advisor_user = appointment.advisor.user
+        message = f"Feedback has been submitted for the appointment '{appointment.topic}'."
+        Notification.objects.create(user=advisor_user, message=message)
+
+        # Redirect to the appointment detail page after submitting feedback
+        return redirect('appointment_detail_student', appointment_id=appointment_id)
+
+    return render(request, 'appointment_feedback_student.html', {'appointment_id': appointment.id})
+
+def appointment_history(request):
+    appointments = Appointment.objects.filter(student=request.user.student, is_completed=True) | Appointment.objects.filter(student=request.user.student, is_rejected=True)
+    appointments_without_feedback = [appointment for appointment in appointments if appointment.is_completed and not Feedback.objects.filter(appointment=appointment).exists()]
+
+    return render(request, 'appointment_history_student.html', {'appointments': appointments})
+
 
 def approve_appointment(request, appointment_id):
     appointment = get_object_or_404(Appointment, id=appointment_id)
@@ -207,14 +264,14 @@ def edit_appointment(request, appointment_id):
         message = "I have proposed another appointment."
         Notification.objects.create(user=advisor_user, message=message)
 
-        return redirect('view_appointments')
+        return redirect('view_appointments_student')
     else:
         return render(request, 'edit_appointment_student.html', {'appointment': appointment})
 
 
 def view_tasks(request):
     # Fetch all uncompleted tasks related to the student
-    uncompleted_tasks = Task.objects.filter(student=request.user.student, completed=False)
+    uncompleted_tasks = Task.objects.filter(student=request.user.student,completed=False, failed=False)
     return render(request, 'view_tasks_student.html', {'tasks': uncompleted_tasks})
 
 def mark_task_completed(request, task_id):
@@ -239,7 +296,7 @@ def student_notifications(request):
     return render(request, 'notifications_student.html', context)
 
 def task_history(request):
-    tasks = Task.objects.filter(student=request.user.student)
+    tasks = Task.objects.filter(student=request.user.student, completed=True) | Task.objects.filter(student=request.user.student, failed=True)
     context = {'tasks': tasks}
     return render(request, 'task_history_student.html', context)
 
@@ -250,3 +307,18 @@ def view_appointments(request):
 def logout_view(request):
     logout(request)
     return redirect('login_student')
+
+def appointment_detail(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+    
+    # Determine the status of the appointment
+    if appointment.approved_by_advisor and appointment.approved_by_student:
+        status = "Accepted"
+    elif appointment.is_completed:
+        status = "Completed"
+    elif appointment.is_rejected:
+        status = "Rejected"
+    else:
+        status = "Pending"
+    
+    return render(request, 'appointment_detail.html', {'appointment': appointment, 'status': status})

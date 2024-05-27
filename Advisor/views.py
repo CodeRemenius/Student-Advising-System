@@ -72,14 +72,16 @@ def dashboard_advisor(request):
     next_4_appointments = Appointment.objects.filter(
         advisor=request.user.advisor, 
         approved_by_advisor=True, 
-        approved_by_student=True
+        approved_by_student=True,
+        is_completed=False,
     ).order_by('start_time')[:4]
     
     # Filter appointments where student has approved but advisor has not
     last_3_unapproved_appointments = Appointment.objects.filter(
         advisor=request.user.advisor,
         approved_by_student=True,
-        approved_by_advisor=False
+        approved_by_advisor=False,
+        is_rejected=False,
     ).order_by('-start_time')[:3]
     
     context = {
@@ -307,7 +309,7 @@ def reject_appointment(request, appointment_id):
     return redirect('view_appointments')
 
 def approved_appointments(request):
-    appointments = Appointment.objects.filter(advisor=request.user.advisor, approved_by_advisor=True, approved_by_student=True)
+    appointments = Appointment.objects.filter(advisor=request.user.advisor, approved_by_advisor=True, approved_by_student=True,is_completed=False)
     return render(request, 'approved_appointments.html', {'appointments': appointments})
 
 def complete_appointment(request, appointment_id):

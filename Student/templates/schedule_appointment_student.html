@@ -8,6 +8,10 @@
 </head>
 <body>
     <h1>Schedule Appointment</h1>
+    {% if error_message %}
+    <p>{{ error_message }}</p>
+{% endif %}
+
     <form method="post" action="{% url 'schedule_appointment_student' %}">
         {% csrf_token %}
         <label for="start_time">Start Time:</label><br>

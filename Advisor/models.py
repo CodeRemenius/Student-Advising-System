@@ -46,6 +46,9 @@ class Appointment(models.Model):
     is_completed = models.BooleanField(default=False)
     is_rejected = models.BooleanField(default=False)
 
+    def has_feedback(self):
+        return hasattr(self, 'feedback')
+
 class Feedback(models.Model):
     appointment = models.OneToOneField(Appointment, on_delete=models.CASCADE)
     rating = models.IntegerField()  # Can be a rating scale from 1 to 5

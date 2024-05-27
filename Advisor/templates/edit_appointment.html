@@ -7,7 +7,7 @@
 </head>
 <body>
     <h1>Edit Appointment</h1>
-    <form method="post" action="{% url 'edit_appointment' %}">
+    <form method="post" action="{% url 'edit_appointment' appointment.id %}">
         {% csrf_token %}
         <label for="start_time">Start Time:</label><br>
         <input type="datetime-local" id="start_time" name="start_time" value="{{ appointment.start_time|date:'Y-m-d\TH:i' }}"><br>
@@ -17,9 +17,9 @@
         <input type="text" id="topic" name="topic" value="{{ appointment.topic }}"><br>
         <label for="mode_of_meeting">Mode of Meeting:</label><br>
         <select id="mode_of_meeting" name="mode_of_meeting">
-            {% for choice in MEETING_CHOICES %}
-                <option value="{{ choice.0 }}" {% if choice.0 == appointment.mode_of_meeting %}selected{% endif %}>{{ choice.1 }}</option>
-            {% endfor %}
+            <option value="">Select Mode Of Meeting</option>
+            <option value="Online" {% if appointment.mode_of_meeting == 'Online' %} selected {% endif %}>Online</option>
+            <option value="Physical" {% if appointment.mode_of_meeting == 'Physical' %} selected {% endif %}>Physical</option>
         </select><br><br>
         <button type="submit">Save Changes</button>
     </form>

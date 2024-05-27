@@ -11,7 +11,7 @@ urlpatterns = [
     path('appointment/schedule/', views.schedule_appointment, name='schedule_appointment'),
     path('appointment/<int:appointment_id>/', views.appointment_detail, name='appointment_detail'),
     path('appointment/history/', views.appointment_history, name='appointment_history'),
-    path('appointment/<int:appointment_id>/feedback/', views.appointment_feedback, name='appointment_feedback'),
+    path('appointment/feedback/', views.appointment_feedback, name='appointment_feedback'),
     path('advising_hours/define/', views.define_advising_hours, name='define_advising_hours'),
     path('students/', views.view_students, name='view_students'),
     path('notifications/', views.advisor_notifications, name='advisor_notifications'),
@@ -20,7 +20,10 @@ urlpatterns = [
     # Additional URLs for dashboard
     path('task/history/', views.task_history, name='task_history'),
     path('appointment/view/', views.view_appointments, name='view_appointments'),
-    path('approved/appointments/', views.approved_appointments, name='approved_appointments'),
+    path('approved/appointments/<int:appointment_id>/', views.approve_appointment, name='approved_appointments'),
+    path('reject/appointment/<int:appointment_id>/', views.reject_appointment, name='reject_appointment'),
     path('edit/appointment/<int:appointment_id>/', views.edit_appointment, name='edit_appointment'),
     path('logout/', views.logout_view, name='logout_advisor'),
+    path('approved/appointments/', views.approved_appointments, name='approved_appointments'),
+    path('complete/appointment/<int:appointment_id>/', views.complete_appointment, name='complete_appointment'),
 ]

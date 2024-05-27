@@ -17,6 +17,7 @@
                 <th>End Time</th>
                 <th>Topic</th>
                 <th>Mode of Meeting</th>
+                <th>Status</th>
             </tr>
         </thead>
         <tbody>
@@ -27,6 +28,11 @@
                 <td>{{ appointment.end_time }}</td>
                 <td>{{ appointment.topic }}</td>
                 <td>{{ appointment.get_mode_of_meeting_display }}</td>
+                {% if appointment.is_completed %}
+                <td>Completed</td>
+                {% else %}
+                <td>Rejected</td>
+                {% endif %}
             </tr>
             {% endfor %}
         </tbody>

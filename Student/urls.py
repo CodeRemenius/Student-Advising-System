@@ -21,8 +21,9 @@ urlpatterns = [
     path('save_advisor/', views.save_advisor, name='save_advisor'),    
     path('tasks/<int:task_id>/complete/', views.mark_task_completed, name='mark_task_completed'),
     path('appointment/view/', views.view_appointments, name='view_appointments_student'),
-    path('approved/appointments/', views.approve_appointment, name='approved_appointments_student'),
+    path('approved/appointments/<int:appointment_id>/', views.approve_appointment, name='approved_appointments_student'),
     path('edit/appointment/<int:appointment_id>/', views.edit_appointment, name='edit_appointment_student'),
+    
 
 
 ]

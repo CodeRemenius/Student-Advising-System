@@ -1,5 +1,4 @@
 <!-- appointment_history.html -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,16 +16,29 @@
                 <th>End Time</th>
                 <th>Topic</th>
                 <th>Mode of Meeting</th>
+                <th>Status</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
             {% for appointment in appointments %}
             <tr onclick="window.location='{% url 'appointment_detail_student' appointment.id %}'" style="cursor: pointer;">
-                <td>{{ appointment.advisor.user.get_full_name }}</td>
+                <td>{{ request.user.student.advisor.user.get_full_name }}</td>
                 <td>{{ appointment.start_time }}</td>
                 <td>{{ appointment.end_time }}</td>
                 <td>{{ appointment.topic }}</td>
                 <td>{{ appointment.get_mode_of_meeting_display }}</td>
+                {% if appointment.is_completed %}
+                    <td>Completed</td>
+                    {% if appointment.has_feedback %}
+                        <td>Feedback Given</td> <!-- Empty column if feedback already exists -->
+                    {% else %}
+                        <td><a href="{% url 'appointment_feedback_student' appointment.id %}">Feedback</a></td>
+                    {% endif %}
+                {% else %}
+                    <td>Rejected</td>
+                    <td>No Feedback Rejected</td> <!-- Empty column if appointment is rejected -->
+                {% endif %}
             </tr>
             {% endfor %}
         </tbody>

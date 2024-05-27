@@ -13,6 +13,10 @@
         <thead>
             <tr>
                 <th>Appointment</th>
+                <th>Student</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Mode of Meeting</th>
                 <th>Rating</th>
                 <th>Comment</th>
             </tr>
@@ -20,7 +24,11 @@
         <tbody>
             {% for feedback in feedbacks %}
             <tr>
-                <td>{{ feedback.appointment }}</td>
+                <td>{{ feedback.appointment.topic }}</td>
+                <td>{{ feedback.appointment.student.user.get_full_name }}</td>
+                <td>{{ feedback.appointment.start_time }}</td>
+                <td>{{ feedback.appointment.end_time }}</td>
+                <td>{{ feedback.appointment.get_mode_of_meeting_display }}</td>
                 <td>{{ feedback.rating }}</td>
                 <td>{{ feedback.comment }}</td>
             </tr>
